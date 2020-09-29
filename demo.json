@@ -1,0 +1,15 @@
+{
+    "share_name": "my-share",
+    "remote": {
+        "username": "user",
+        "password": "my-secret",
+        "url": "https://my.nextcloud.instance.tld/remote.php/webdav/"
+    },
+    "smb": {
+	    "password": "my-different-secret"
+    },
+    "vfs": {
+        "cache_dir": "/path/to/a/non/fat/drive",
+        "vfs_cache_max_size": "512m"
+    }
+}
