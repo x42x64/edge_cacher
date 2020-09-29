@@ -69,7 +69,9 @@ Example `config.json`:
 ```
 apt install python3 python3-click samba             # samba only if you plan to serve via Windows share
 curl https://rclone.org/install.sh | sudo bash      # latest rclone
-Todo: tar from github download
+git clone https://github.com/x42x64/edge_cacher.git
+cd edge_cacher
+./edge_cacher.py --help
 ```
 
 ## Usage
@@ -122,7 +124,7 @@ A detailed explaination of these settings can be found on the [rclone website](h
 
 
 ## Ideas for the future
-[ ] Gui
-[ ] Config support for more backends (all rclone supported backends)
-[ ] More serving options
-[ ] Convergence with remote Nextcloud (poor man's replication)
+* Gui
+* Config support for more backends (all rclone supported backends)
+* More serving options
+* Convergence with remote Nextcloud (poor man's replication)
