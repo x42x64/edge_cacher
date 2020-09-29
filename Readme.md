@@ -74,6 +74,30 @@ cd edge_cacher
 ./edge_cacher.py --help
 ```
 
+### Setup your first edge cache
+```
+cp demo.json my-config.json
+# modify my-config.json to your liking
+```
+Now create the mount
+```
+sudo ./edge_cacher.py add my-config.json
+```
+
+To list all configurations for the current user:
+```
+sudo ./edge_cacher.py ls
+```
+
+Your data now is accessible at `/mnt/edge-cacher/<your share name>`.
+If you have a samba server installed and you provided a `smb` key in the json config, your data should now be also accessible at:
+```
+\\<your ip>\<your share name>
+user: <your share name>_user
+pw: <as provided in the json config under the smb section>
+```
+
+
 ## Usage
 ```
 Usage: edge-cacher.py [OPTIONS] COMMAND [ARGS]...
@@ -128,3 +152,28 @@ A detailed explaination of these settings can be found on the [rclone website](h
 * Config support for more backends (all rclone supported backends)
 * More serving options
 * Convergence with remote Nextcloud (poor man's replication)
+
+## Troubleshooting
+This section needs to be done. Just a few command snippets:
+
+* Is rclone running?
+```
+# logs
+journalctl -t rclone
+
+# systemd status
+systemctl status edge-cacher-<share name>
+```
+
+* Is samba running?
+```
+sudo systemctl status smbd.service
+```
+
+* Manual cleanup
+  * remove include from `/etc/samba/smb.conf`
+  * restart samba 
+  * stop rclone service
+  * remove from systemd
+  * remove config
+  * remove mount directory
