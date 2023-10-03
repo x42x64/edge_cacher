@@ -193,7 +193,7 @@ def add_user(username: str, password: str):
         "--shell", "/bin/false", username
     ])
     if result.returncode != 0:
-        raise OSError("Could not create user {username}.")
+        raise OSError(f"Could not create user {username}.")
 
     result = subprocess.run([
         "bash", "-c",
@@ -210,12 +210,12 @@ def delete_user(username):
     # remove from samba database
     result = subprocess.run(["pdbedit", "-x", username])
     if result.returncode != 0:
-        raise OSError("Could not delete {username} from samba database.")
+        raise OSError(f"Could not delete {username} from samba database.")
 
     # remove user
     result = subprocess.run(["userdel", username])
     if result.returncode != 0:
-        raise OSError("Could not delete {username} from system.")
+        raise OSError(f"Could not delete {username} from system.")
 
 
 def register_rclone_service(share_name: str):
@@ -223,11 +223,11 @@ def register_rclone_service(share_name: str):
 
     result = subprocess.run(["systemctl", "enable", local_path.as_posix()])
     if result.returncode != 0:
-        raise OSError("Could not enable {local_path.name}.")
+        raise OSError(f"Could not enable {local_path.name}.")
 
     result = subprocess.run(["systemctl", "start", local_path.name])
     if result.returncode != 0:
-        raise OSError("Could not start {local_path.name}.")
+        raise OSError(f"Could not start {local_path.name}.")
 
 
 def unregister_rclone_service(share_name: str):
@@ -235,11 +235,11 @@ def unregister_rclone_service(share_name: str):
 
     result = subprocess.run(["systemctl", "stop", link_path.name])
     if result.returncode != 0:
-        raise OSError("Could not start {link_path.name}.")
+        raise OSError(f"Could not start {link_path.name}.")
 
     result = subprocess.run(["systemctl", "disable", link_path.name])
     if result.returncode != 0:
-        raise OSError("Could not enable {link_path.name}.")
+        raise OSError(f"Could not enable {link_path.name}.")
 
 
 def restart_samba():
@@ -356,12 +356,16 @@ def add(configfile: str):
     with Path(configfile).open() as fd:
         config_json = json.load(fd)
 
+    config = create_config(config_json)
+    add_remote(config)
+
+def create_config(config_json):
     config = EdgeCacherConfig(
         share_name=config_json["share_name"],
         remote=RemoteConfig(**config_json["remote"]),
         vfs=VfsConfig(**config_json["vfs"]),
         smb=SmbConfig(**config_json["smb"]) if "smb" in config_json else None)
-    add_remote(config)
+    return config
 
 
 @main.command()
@@ -371,6 +375,20 @@ def remove(share_name: str):
     Remove an edge cache by its name like displayed with `ls`.
     """
     remove_remote(share_name)
+
+
+@main.command()
+@click.argument("configfile", type=click.Path(exists=True))
+def update(configfile: str):
+    """
+    Update (remove and add) an edge cache by providing a JSON config as CONFIGFILE
+    Note: The share name must be the same. If this is not the case. Remove the old share and then add the new config file
+    """
+    with Path(configfile).open() as fd:
+        config_json = json.load(fd)
+    remove_remote(config_json["share_name"])
+    config = create_config(config_json)
+    add_remote(config)
 
 
 @main.command()

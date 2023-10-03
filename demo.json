@@ -3,7 +3,7 @@
     "remote": {
         "username": "user",
         "password": "my-secret",
-        "url": "https://my.nextcloud.instance.tld/remote.php/webdav/"
+        "url": "https://my.nextcloud.instance.tld/remote.php/dav/files/<your-username>"
     },
     "smb": {
 	    "password": "my-different-secret"
