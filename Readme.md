@@ -102,8 +102,8 @@ pw: <as provided in the json config under the smb section>
 ```
 Usage: edge-cacher.py [OPTIONS] COMMAND [ARGS]...
 
-  A tool to configure rclone and systemd to mount nextcloud webdav shares
-  and potentially serve them via samba.
+  A tool to configure rclone and systemd to mount nextcloud webdav shares and
+  potentially serve them via samba.
 
 Options:
   --help  Show this message and exit.
@@ -112,6 +112,7 @@ Commands:
   add     Add an edge cache by providing a JSON config as CONFIGFILE
   ls      List all configured edge caches by this user.
   remove  Remove an edge cache by its name like displayed with `ls`.
+  update  Update (remove and add) an edge cache by providing a JSON config
 ```
 
 For example json configs, check above.
