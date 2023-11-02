@@ -23,7 +23,7 @@ Example `config.json`:
     "remote": {
         "username": "user",
         "password": "my-secret",
-        "url": "https://my.nextcloud.instance.tld/remote.php/webdav/"
+        "url": "https://my.nextcloud.instance.tld/remote.php/dav/files/<your-username>"
     },
     "vfs": {
         "cache_dir": "/path/to/a/non/fat32/drive",
@@ -52,7 +52,7 @@ Example `config.json`:
     "remote": {
         "username": "user",
         "password": "my-secret",
-        "url": "https://my.nextcloud.instance.tld/remote.php/webdav/"
+        "url": "https://my.nextcloud.instance.tld/remote.php/dav/files/<your-username>"
     },
     "smb": {
 	    "password": "my-different-secret"
@@ -102,8 +102,8 @@ pw: <as provided in the json config under the smb section>
 ```
 Usage: edge-cacher.py [OPTIONS] COMMAND [ARGS]...
 
-  A tool to configure rclone and systemd to mount nextcloud webdav shares
-  and potentially serve them via samba.
+  A tool to configure rclone and systemd to mount nextcloud webdav shares and
+  potentially serve them via samba.
 
 Options:
   --help  Show this message and exit.
@@ -112,6 +112,7 @@ Commands:
   add     Add an edge cache by providing a JSON config as CONFIGFILE
   ls      List all configured edge caches by this user.
   remove  Remove an edge cache by its name like displayed with `ls`.
+  update  Update (remove and add) an edge cache by providing a JSON config
 ```
 
 For example json configs, check above.
@@ -157,18 +158,34 @@ A detailed explaination of these settings can be found on the [rclone website](h
 This section needs to be done. Just a few command snippets:
 
 * Is rclone running?
-```
-# logs
-journalctl -t rclone
+  ```
+  # logs
+  journalctl -t rclone
 
-# systemd status
-systemctl status edge-cacher-<share name>
-```
+  # systemd status
+  systemctl status edge-cacher-<share name>
+  ```
 
 * Is samba running?
-```
-sudo systemctl status smbd.service
-```
+  ```
+  sudo systemctl status smbd.service
+  ```
+
+* Is the certificate trusted?
+  If you are using a self signed certificate, don't forget to add it to your trusted certifcates
+  You can check this by running:
+  ```
+  sudo systemctl status edge-cacher-<share name>
+
+  # Output
+  # IO error: couldn't list files: Propfind "<your nextcloud url>": tls: failed to verify certificate: x509: certificate signed by unknown authority
+  ```
+
+  You can fix this error by add your certificate to `/usr/local/share/ca-certificates/` (Ubuntu) and then run:
+  ```
+  sudo update-ca-certificates
+  ```
+
 
 * Manual cleanup
   * remove include from `/etc/samba/smb.conf`
