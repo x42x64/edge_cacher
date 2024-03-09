@@ -271,7 +271,7 @@ def add_remote(config: EdgeCacherConfig):
 
         with _SAMBA_CONFIG.open("a") as f:
             f.write(
-                f"include = {get_smb_config_path(config.share_name).absolute().as_posix()}"
+                f"\ninclude = {get_smb_config_path(config.share_name).absolute().as_posix()}"
             )
 
         add_user(f"{config.share_name}_user", config.smb.password)
